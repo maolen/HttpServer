@@ -77,8 +77,11 @@ namespace HttpWebServer
                 }
                 catch (Exception exception)
                 {
-                    response.StatusCode = 404;
-                    Console.WriteLine(exception.Message);
+                    response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    response.ContentType = "application/json";
+                    var buffer = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(exception));
+                    response.ContentLength64 = buffer.Length;
+                    response.OutputStream.Write(buffer, 0, buffer.Length);
                 }
 
                 response.Close();
